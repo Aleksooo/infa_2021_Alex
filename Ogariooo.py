@@ -24,7 +24,7 @@ class ball:
     def collide(self, obj):
         if pg.Vector2(self.pos - obj.pos).length() <= self.radius + obj.radius:
             dir = (obj.pos - self.pos).normalize()
-            self.velocity = -dir*pg.Vector2(self.velocity).length()
+            self.velocity = (self.velocity.normalize()-dir).normalize()*pg.Vector2(self.velocity).length()
             self.radius /= 2
 
 
