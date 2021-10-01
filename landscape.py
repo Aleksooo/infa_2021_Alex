@@ -1,6 +1,6 @@
 import pygame as pg
 import pygame.gfxdraw
-
+#нужно
 WIDTH, HEIGHT = 600, 500
 
 pg.init()
