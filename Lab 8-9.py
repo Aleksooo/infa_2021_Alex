@@ -1,10 +1,13 @@
+from math import e
 import pygame as pg
 from random import randint, choice
 
 WIDTH, HEIGHT = 600, 500
+FPS = 60
 
 floor_heigth = 40
 
+BG = (175, 218, 252)
 WHEElS = (0, 0, 0)
 GUN = (0, 0, 0)
 BODY = (0, 128, 0)
@@ -151,15 +154,17 @@ class Bullet:
 
 class Target:
     def __init__(self):
-        self.pos = pg.Vector2(randint(50, WIDTH-50), randint(50, HEIGHT-50-floor_heigth))
-
+        #self.pos = pg.Vector2(randint(51, WIDTH-51), randint(51, HEIGHT-51-floor_heigth))
+        self.offset = 60
         self.movement_type = choice(['hor', 'ver'])
 
         if self.movement_type == 'hor':
-            self.extreme_points = [randint(50, WIDTH/2-50), randint(WIDTH/2+50, WIDTH-50)]
+            self.extreme_points = [randint(self.offset, WIDTH/2-self.offset), randint(WIDTH/2+self.offset, WIDTH-self.offset)]
+            self.pos = pg.Vector2(randint(self.extreme_points[0], self.extreme_points[1]), randint(self.offset, HEIGHT-self.offset-floor_heigth))
             self.velocity = pg.Vector2(randint(-7, 7), 0)
         else:
-            self.extreme_points = [randint(50, HEIGHT/2-50), randint(HEIGHT/2+50, HEIGHT-50-floor_heigth)]
+            self.extreme_points = [randint(self.offset, HEIGHT/2-self.offset), randint(HEIGHT/2+self.offset, HEIGHT-self.offset-floor_heigth)]
+            self.pos = pg.Vector2(randint(self.offset, WIDTH-self.offset), randint(self.extreme_points[0], self.extreme_points[1]))
             self.velocity = pg.Vector2(0, randint(-7, 7))
 
         self.color = choice([(155, 17, 30), (76, 187, 23), (18, 47, 170)])
@@ -169,10 +174,10 @@ class Target:
     def update(self):
         ''' Функция двигает мишень по горизонтале или вертикали в зависимости о типа движения '''
         if self.movement_type == 'hor':
-            if self.pos.x <= self.extreme_points[0] or self.pos.x >= self.extreme_points[1]:
+            if self.pos.x < self.extreme_points[0] or self.pos.x > self.extreme_points[1]:
                 self.velocity *= -1
         else:
-            if self.pos.y <= self.extreme_points[0] or self.pos.y >= self.extreme_points[1]:
+            if self.pos.y < self.extreme_points[0] or self.pos.y > self.extreme_points[1]:
                 self.velocity *= -1
 
         self.pos += self.velocity
@@ -207,7 +212,8 @@ running = True
 start_shooting = False
 
 while running:
-    screen.fill((100, 100, 150))
+    screen.fill(BG)
+    pg.time.Clock().tick(FPS)
 
     ''' Обработка всех нажатий '''
     for event in pg.event.get():
